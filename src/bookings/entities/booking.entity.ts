@@ -1,0 +1,43 @@
+// booking.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { User } from '../../user/entities/user.entity'; 
+import { ServiceOption } from '../../service-options/entities/service-option.entity';
+import { IsOptional } from 'class-validator';
+
+@Entity()
+export class Booking {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  user_id: number;
+
+  @ManyToOne(() => User, (user) => user.bookings, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @Column()
+  option_id: number;
+
+  @ManyToOne(() => ServiceOption, (option) => option.bookings, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'option_id' })
+  option: ServiceOption;
+
+  @Column({ type: 'int', default: 1 })
+  quantity: number;
+
+  @IsOptional()
+  @Column('decimal', { precision: 10, scale: 2 })
+  total_price: number;
+
+  @Column({ type: 'enum', enum: ['pending', 'confirmed', 'cancelled'], default: 'pending' })
+  status: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
+
+}
+
