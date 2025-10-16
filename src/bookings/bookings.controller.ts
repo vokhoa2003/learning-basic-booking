@@ -12,7 +12,9 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  create(@Body() createBookingDto: CreateBookingDto) {
+  @Roles('customer','admin')
+  create(@Req() req, @Body() createBookingDto: CreateBookingDto) {
+    const { user_id, option_id } = this.extractBookingIdentifiers(req, createBookingDto);
     return this.bookingsService.create(createBookingDto);
   }
 

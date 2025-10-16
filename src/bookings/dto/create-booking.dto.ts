@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsInt, Min, isNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsInt, Min, isNotEmpty, IsNumber, IsString, IsOptional, IsIn } from 'class-validator';
 
 export class CreateBookingDto {
   @IsNotEmpty()
@@ -21,5 +21,8 @@ export class CreateBookingDto {
   @IsString()
   status: string;
 
+  @IsOptional()
+  @IsIn(['cash', 'bank_transfer'])
+  payment_method?: 'cash' | 'bank_transfer';
   // status mặc định sẽ set trong entity (pending)
 }

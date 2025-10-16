@@ -15,14 +15,14 @@ export class CreateServiceOptionDto {
 
   @IsOptional()
   @IsNumber()
-  price?: Number;
+  price?: number;
 
   @IsNotEmpty()
   @IsInt()
   @Min(0)
-  available_slots: number;
+  available_slot: number;
 
   @IsOptional()
   @IsInt()
-  created_by?: number; // User ID
+  create_by?: number; // User ID
 }

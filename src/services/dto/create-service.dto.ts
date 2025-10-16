@@ -11,5 +11,9 @@ export class CreateServiceDto {
 
   @IsOptional()
   @IsInt()
+  create_by?: number; // User ID
+
+  @IsOptional()
+  @IsInt()
   created_by?: number; // User ID
 }

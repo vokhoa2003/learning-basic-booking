@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -14,7 +14,9 @@ export class ServicesController {
 
   @Post()
   @Roles('admin')
-  create(@Body() createServiceDto: CreateServiceDto) {
+  create(@Req() req, @Body() createServiceDto: CreateServiceDto) {
+    const user_id = req.user.id;
+    createServiceDto.create_by = user_id;
     return this.servicesService.create(createServiceDto);
   }
 
@@ -37,10 +39,10 @@ export class ServicesController {
   //   return this.servicesService.findAll();
   // }
 
-  @Get(':id')
+  @Get('search')
   @Roles('admin','customer')
-  findOne(@Param('id') id: string) {
-    return this.servicesService.findOne(+id);
+  findOne(@Query() query: any) {
+    return this.servicesService.findOne(query);
   }
 
   @Patch(':id')

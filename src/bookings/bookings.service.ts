@@ -17,7 +17,7 @@ export class BookingsService {
 
 
   async create(createBookingDto: CreateBookingDto) {
-    const { user_id, option_id, quantity } = createBookingDto;
+    const {user_id, option_id, quantity } = createBookingDto;
     const checkExitBooking = await this.bookingsRepository.findOneBy({ user_id, option_id });
     if (checkExitBooking) {
       throw new BadRequestException('You have already booked this service option');
@@ -36,7 +36,7 @@ export class BookingsService {
     const booking = this.bookingsRepository.create({
       ...createBookingDto,
       total_price,
-      status: 'pending',
+      status: createBookingDto.payment_method === "cash" ? 'paid' : 'pending',
     });
 
     await this.serviceOptionsRepository.save(option);

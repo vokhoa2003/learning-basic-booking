@@ -30,8 +30,11 @@ export class Booking {
   @Column('decimal', { precision: 10, scale: 2 })
   total_price: number;
 
-  @Column({ type: 'enum', enum: ['pending', 'confirmed', 'cancelled'], default: 'pending' })
+  @Column({ type: 'enum', enum: ['pending', 'paid', 'cancelled'], default: 'pending' })
   status: string;
+
+  @Column({ nullable: true })
+  payment_method: 'cash' | 'bank_transfer';
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
