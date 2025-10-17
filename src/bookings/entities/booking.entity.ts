@@ -9,17 +9,17 @@ export class Booking {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   user_id: number;
 
-  @ManyToOne(() => User, (user) => user.bookings, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.bookings, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({ nullable: true })
   option_id: number;
 
-  @ManyToOne(() => ServiceOption, (option) => option.bookings, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ServiceOption, (option) => option.bookings, { onDelete: 'SET NULL' })
   @JoinColumn({ name: 'option_id' })
   option: ServiceOption;
 

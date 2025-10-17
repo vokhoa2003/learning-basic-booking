@@ -7,12 +7,11 @@ import { Roles } from 'src/authorization/roles.decorator';
 import { RolesGuard } from 'src/authorization/roles.guard';
 
 @Controller('services')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
-
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   create(@Req() req, @Body() createServiceDto: CreateServiceDto) {
     const user_id = req.user.id;
@@ -21,7 +20,6 @@ export class ServicesController {
   }
 
   @Get()
-  @Roles('admin','customer')
   findAll(@Query('option') option?: string) {
     if(option){
       return this.servicesService.findAllWithOptions(option);
@@ -29,34 +27,22 @@ export class ServicesController {
     return this.servicesService.findAll();
   }
 
-// nếu đặt là @Params('option) thì set up @Get('option/:option')
-// nếu đặt là Query('option') thì set up link call là ....folder?option=tên bảng kết nối 
-  // @Get()
-  // findAllWithOptions(@Query('option') option: string){
-  //   if(option){
-  //     return this.servicesService.findAllWithOptions(option);
-  //   }
-  //   return this.servicesService.findAll();
-  // }
-
   @Get('search')
-  @Roles('admin','customer')
   findOne(@Query() query: any) {
     return this.servicesService.findOne(query);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
     return this.servicesService.update(+id, updateServiceDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   remove(@Param('id') id: string) {
     return this.servicesService.remove(+id);
-  }
-
-  private extractServicesIdentifiers(req: any, dto: UpdateServiceDto) {
-    const role = req.user.role;
-    let user_id: number;
   }
 }

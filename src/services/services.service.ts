@@ -14,11 +14,19 @@ export class ServicesService {
       private readonly ServiceOptionRepository: Repository<ServiceOption>,
   ) {}
   async create(createServiceDto: CreateServiceDto) {
-    const isExist = await this.ServicesRepository.findOneBy({ service: createServiceDto.service });
+    // Kiểm tra tồn tại theo service name
+    const isExist = await this.ServicesRepository.findOne({ 
+      where: { service: createServiceDto.service } 
+    });
+    
     if (isExist) {
-      throw new Error('Service name already exists');
+      // Nếu đã tồn tại, tự động gọi update
+      return this.update(isExist.id as number, createServiceDto);
     }
-    return this.ServicesRepository.save(createServiceDto);
+    
+    // Nếu chưa tồn tại, tạo mới
+    const newService = this.ServicesRepository.create(createServiceDto);
+    return this.ServicesRepository.save(newService);
   }
 
   findAll(): Promise<Service[]>  {
@@ -70,11 +78,43 @@ export class ServicesService {
     });
   }
 
-  update(id: number, updateServiceDto: UpdateServiceDto) {
-    return `This action updates a #${id} service`;
+  async update(id: number, updateServiceDto: UpdateServiceDto) {
+    // Kiểm tra service có tồn tại không
+    const service = await this.ServicesRepository.findOneBy({ id });
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
+    // Nếu cập nhật service name, kiểm tra trùng lặp với service khác
+    if (updateServiceDto.service && updateServiceDto.service !== service.service) {
+      const existingService = await this.ServicesRepository.findOne({
+        where: { service: updateServiceDto.service }
+      });
+      if (existingService && existingService.id !== id) {
+        throw new Error('Service name already exists');
+      }
+    }
+
+    // Thực hiện cập nhật
+    await this.ServicesRepository.update(id, updateServiceDto);
+    return this.ServicesRepository.findOne({ 
+      where: { id },
+      relations: ['options']
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} service`;
+  async remove(id: number) {
+    // Kiểm tra service có tồn tại không
+    const service = await this.ServicesRepository.findOneBy({ id });
+    if (!service) {
+      throw new Error('Service not found');
+    }
+
+    // Xóa service
+    await this.ServicesRepository.delete(id);
+    return { 
+      message: `Service #${id} has been successfully removed`,
+      deletedService: service 
+    };
   }
 }

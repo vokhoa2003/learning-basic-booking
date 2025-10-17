@@ -32,7 +32,8 @@ export class CreateUserDto {
   refresh_token?: string | null;
 
   @IsString()
-  role: string;
+  @IsOptional()
+  role?: string;
 
   @IsDate()
   @IsOptional() // nếu muốn cho phép không gửi date_of_birth

@@ -8,11 +8,12 @@ import { Roles } from 'src/authorization/roles.decorator';
 import { RolesGuard } from 'src/authorization/roles.guard';
 
 @Controller('service-options')
-@UseGuards(JwtAuthGuard, RolesGuard)
+//@UseGuards(JwtAuthGuard, RolesGuard)
 export class ServiceOptionsController {
   constructor(private readonly serviceOptionsService: ServiceOptionsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   create(@Body() createServiceOptionDto: CreateServiceOptionDto) {
     return this.serviceOptionsService.create(createServiceOptionDto);
@@ -29,12 +30,14 @@ export class ServiceOptionsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   update(@Param('id') id: string, @Body() updateServiceOptionDto: UpdateServiceOptionDto) {
     return this.serviceOptionsService.update(+id, updateServiceOptionDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   remove(@Param('id') id: string) {
     return this.serviceOptionsService.remove(+id);
